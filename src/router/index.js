@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '../store'
 import Home from '../views/Home.vue'
+import Login from '../components/Login.vue'
 import Categoria from '../components/Categoria.vue'
 
 Vue.use(VueRouter)
@@ -8,21 +10,31 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    name: 'home',
+    component: Home,
+    meta: {
+      administrador: true,
+      dentista: true,
+      asistente: true
+    }
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    path: '/login',
+    name: 'login',
+    component: Login,
+    meta: {
+      libre: true
+    }
   },
   {
     path: '/categoria',
     name: 'categoria',
-    component: Categoria
+    component: Categoria,
+    meta: {
+      administrador: true,
+      dentista: true,
+      asistente: true
+    }
   },
 ]
 
@@ -30,6 +42,26 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if(to.matched.some(record => record.meta.libre)){
+    next();
+  } else if ( store.state.usuario && store.state.usuario.rol == 'Administrador'){
+    if( to.matched.some(record => record.meta.administrador)){
+      next();
+    }
+  } else if ( store.state.usuario && store.state.usuario.rol == 'Dentista'){
+    if( to.matched.some(record => record.meta.dentista)){
+      next();
+    }
+  } else if ( store.state.usuario && store.state.usuario.rol == 'Asistente'){
+    if( to.matched.some(record => record.meta.asistente)){
+      next();
+    }
+  } else {
+    next({name: 'login'});
+  } 
 })
 
 export default router

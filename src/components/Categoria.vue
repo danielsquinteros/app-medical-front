@@ -188,7 +188,9 @@
             },
             listar(){
                 let me = this;
-                axios.get('categoria/list').then(function(response){
+                let header = { "token": this.$store.state.token};
+                let configuracion = { headers: header };
+                axios.get('categoria/list', configuracion).then(function(response){
                     me.categorias = response.data;
                 }).catch(function(error){
                     console.log(error);
@@ -204,12 +206,14 @@
             },
             guardar(){
                 let me = this;
+                let header = { "token": this.$store.state.token};
+                let configuracion = { headers: header };
                 if(this.validar()){
                     return;
                 }
                 if(this.editedIndex > -1){
                     //Código para editar una categoría
-                    axios.put('categoria/update', {'_id':this._id,'nombre':this.nombre,'descripcion':this.descripcion})
+                    axios.put('categoria/update', {'_id':this._id,'nombre':this.nombre,'descripcion':this.descripcion}, configuracion)
                     .then(function(response){
                         me.limpiar();
                         me.close();
@@ -221,7 +225,7 @@
 
                 } else {
                     //Código para guardar una categoría
-                    axios.post('categoria/add', {'nombre':this.nombre,'descripcion':this.descripcion})
+                    axios.post('categoria/add', {'nombre':this.nombre,'descripcion':this.descripcion}, configuracion)
                     .then(function(response){
                         me.limpiar();
                         me.close();
@@ -261,7 +265,9 @@
 
             activar(){
                 let me = this;
-                axios.put('categoria/activate', {'_id':this.adId})
+                let header = { "token": this.$store.state.token};
+                let configuracion = { headers: header };
+                axios.put('categoria/activate', {'_id':this.adId}, configuracion)
                 .then(function(response){
                     me.adModal=0,
                     me.adAccion=0,
@@ -275,7 +281,9 @@
 
             desactivar(){
                 let me = this;
-                axios.put('categoria/desactivate', {'_id':this.adId})
+                let header = { "token": this.$store.state.token};
+                let configuracion = { headers: header };
+                axios.put('categoria/desactivate', {'_id':this.adId}, configuracion)
                 .then(function(response){
                     me.adModal=0,
                     me.adAccion=0,
