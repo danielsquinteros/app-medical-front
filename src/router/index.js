@@ -4,6 +4,7 @@ import store from '../store'
 import Home from '../views/Home.vue'
 import Login from '../components/Login.vue'
 import Categoria from '../components/Categoria.vue'
+import Usuario from '../components/Usuario.vue'
 
 Vue.use(VueRouter)
 
@@ -34,8 +35,17 @@ const routes = [
       administrador: true,
       dentista: true,
       asistente: true
-    }
+    },
   },
+  {
+    path: '/usuario',
+    name: 'usuario',
+    component: Usuario,
+    meta: {
+      administrador: true,
+    },
+  },
+  
 ]
 
 const router = new VueRouter({
