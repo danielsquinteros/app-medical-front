@@ -171,7 +171,7 @@
         computed: {
             formTitle () {
             return this.editedIndex === -1 ? 'Nuevo Usuario' : 'Editar Usuario'
-            },
+            },    
         },
 
         watch: {
@@ -189,16 +189,16 @@
                 this.valida=0;
                 this.validaMensaje=[];
                 if(!this.rol){
-                    this.validaMensaje.push('Seleccione un rol para el usuario')
+                    this.validaMensaje.push('Seleccione un rol para el usuario.')
                 }
                 if(this.nombre.length < 1 || this.nombre.length > 50){
-                    this.validaMensaje.push('El nombre del usuario debe tener entre 1-50 caracteres')
+                    this.validaMensaje.push('El nombre del usuario debe tener entre 1-50 caracteres.')
                 }
                 if(this.email.length < 1 || this.email.length > 50){
-                    this.validaMensaje.push('El email del usuario debe tener entre 1-50 caracteres')
+                    this.validaMensaje.push('El email del usuario debe tener entre 1-50 caracteres.')
                 }
                 if(this.password.length < 1 || this.password.length > 64){
-                    this.validaMensaje.push('La contraseña del usuario debe tener entre 1-64 caracteres')
+                    this.validaMensaje.push('La contraseña del usuario debe tener entre 1-64 caracteres.')
                 }
                 if(this.validaMensaje.length){
                     this.valida=1;

@@ -156,7 +156,7 @@
         },
         computed: {
             formTitle () {
-            return this.editedIndex === -1 ? 'Nueva Categoria' : 'Editar Categoria'
+            return this.editedIndex === -1 ? 'Nueva Categoría' : 'Editar Categoría'
             },
         },
 
@@ -175,10 +175,10 @@
                 this.valida=0;
                 this.validaMensaje=[];
                 if(this.nombre.length < 1 || this.nombre.length > 50){
-                    this.validaMensaje.push('El nombre de la categoria debe tener entre 1-50 caracteres')
+                    this.validaMensaje.push('El nombre de la categoría debe tener entre 1-50 caracteres.')
                 }
                 if(this.descripcion.length > 255){
-                    this.validaMensaje.push('La descripcion de la categoria debe tener entre 1-255 caracteres')
+                    this.validaMensaje.push('La descripción de la categoría debe tener entre 1-255 caracteres.')
                 }
                 if(this.validaMensaje.length){
                     this.valida=1;
