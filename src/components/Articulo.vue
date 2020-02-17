@@ -224,7 +224,7 @@
                     { text: 'Marca', value: 'marca', sortable: true },
                     { text: 'Precio', value: 'precio', sortable: false },
                     { text: 'Fecha de Vencimiento', value: 'fecha_vencimiento', sortable: true, dataType: "Date" },
-                    { text: 'Estado', value: 'estado', sortable: false },
+                    { text: 'Estado', value: 'estado', sortable: true },
                 ],
                 editedIndex: -1,
                 _id:'',

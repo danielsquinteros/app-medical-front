@@ -3,27 +3,27 @@
         <v-col>
             <v-data-table
             :headers="headers"
-            :items="usuarios"
+            :items="proveedores"
             :search="search"
             sort-by="calories"
             class="elevation-1"
             >
             <template v-slot:top>
                 <v-toolbar flat color="white">
-                <v-toolbar-title>Usuarios</v-toolbar-title>
+                <v-toolbar-title>Proveedores</v-toolbar-title>
                 <v-divider
                     class="mx-4"
                     inset
                     vertical
                 ></v-divider>
                 <v-spacer></v-spacer>
-                <v-text-field class="text-xs-center" v-model="search" append-icon="search" label="Buscar Usuario" single-line hide-details ></v-text-field>
+                <v-text-field class="text-xs-center" v-model="search" append-icon="search" label="Buscar Proveedor" single-line hide-details ></v-text-field>
                 <v-spacer></v-spacer>
 
                 <v-dialog v-model="dialog" max-width="500px">
                   
                     <template v-slot:activator="{ on }">
-                    <v-btn color="primary" dark class="mb-2" v-on="on">Nuevo Usuario</v-btn>
+                    <v-btn color="primary" dark class="mb-2" v-on="on">Nuevo Proveedor</v-btn>
                     </template>
                     <v-card>
                     <v-card-title>
@@ -38,16 +38,13 @@
                             </v-col>
                             <v-col cols="12" sm="6" md="6"> 
                                 <v-select
-                                    :items="roles"
-                                    v-model="rol"
-                                    label="Rol"
+                                    :items="tipos_de_proveedores"
+                                    v-model="tipo_proveedor"
+                                    label="Tipos de Proveedores"
                                 ></v-select>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                            <v-text-field v-model="email" label="Email"></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="6">
-                            <v-text-field v-model="password" type="password" label="Password"></v-text-field>
+                            <v-text-field v-model="rut" label="RUT"></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="12" md="12" v-show="valida">
                                 <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v">
@@ -144,20 +141,19 @@
             return{
                 dialog: false,
                 search: '',
-                usuarios: [],
+                proveedores: [],
                 headers: [
                     { text: 'Opciones', value: 'opciones', sortable: false },
                     { text: 'Nombre', value: 'nombre', sortable: true },
-                    { text: 'Rol', value: 'rol', sortable: true },
-                    { text: 'Email', value: 'email', sortable: false },
+                    { text: 'Tipo de Proveedor', value: 'tipo_proveedor', sortable: true },
+                    { text: 'Rut', value: 'rut', sortable: false },
                     { text: 'Estado', value: 'estado', sortable: false },
                 ],
-                desserts: [],
                 editedIndex: -1,
                 _id:'',
                 nombre:'',
-                rol:'',
-                roles:['Administrador', 'Dentista', 'Asistente'],
+                tipo_proveedor:'',
+                tipos_de_proveedores:['Empresa', 'Persona Natural'],
                 email:'',
                 password:'',
                 valida:0,
@@ -170,7 +166,7 @@
         },
         computed: {
             formTitle () {
-            return this.editedIndex === -1 ? 'Nuevo Usuario' : 'Editar Usuario'
+            return this.editedIndex === -1 ? 'Nuevo Proveedor' : 'Editar Proveedor'
             },    
         },
 
@@ -188,17 +184,22 @@
             validar(){
                 this.valida=0;
                 this.validaMensaje=[];
-                if(!this.rol){
-                    this.validaMensaje.push('Seleccione un rol para el usuario.')
+                if(!this.nombre){
+                    this.validaMensaje.push('Debe ingresar el nombre del proveedor')
+                } else {
+                    if(this.nombre.length < 1 || this.nombre.length > 50){
+                    this.validaMensaje.push('El nombre del proveedor debe tener entre 1-50 caracteres.')
+                    }
                 }
-                if(this.nombre.length < 1 || this.nombre.length > 50){
-                    this.validaMensaje.push('El nombre del usuario debe tener entre 1-50 caracteres.')
+                if(!this.tipo_proveedor){
+                    this.validaMensaje.push('Debe ingresar el tipo de proveedor.')
                 }
-                if(this.email.length < 1 || this.email.length > 50){
-                    this.validaMensaje.push('El email del usuario debe tener entre 1-50 caracteres.')
-                }
-                if(this.password.length < 1 || this.password.length > 64){
-                    this.validaMensaje.push('La contraseña del usuario debe tener entre 1-64 caracteres.')
+                if(!this.rut){
+                    this.validaMensaje.push('Debe ingresar un RUT al proveedor.')
+                } else {
+                    if(this.rut.length < 1 || this.rut.length > 20){
+                    this.validaMensaje.push('El RUT del proveedor debe tener entre 1-20 caracteres.')
+                    }
                 }
                 if(this.validaMensaje.length){
                     this.valida=1;
@@ -210,8 +211,8 @@
                 let me = this;
                 let header = { "token": this.$store.state.token};
                 let configuracion = { headers: header };
-                axios.get('usuario/list', configuracion).then(function(response){
-                    me.usuarios = response.data;
+                axios.get('proveedor/list', configuracion).then(function(response){
+                    me.proveedores = response.data;
                 }).catch(function(error){
                     console.log(error);
                 })
@@ -219,9 +220,8 @@
             limpiar(){
                 this._id='';
                 this.nombre='';
-                this.email='';
-                this.password='';
-                this.rol='';
+                this.tipo_proveedor='';
+                this.rut='';
                 this.valida=0;
                 this.validaMensaje=[];
                 this.editedIndex=-1;
@@ -235,12 +235,11 @@
                 }
                 if(this.editedIndex > -1){
                     //Código para editar una categoría
-                    axios.put('usuario/update', {
+                    axios.put('proveedor/update', {
                         '_id':this._id,
-                        'rol': this.rol,
+                        'tipo_proveedor': this.tipo_proveedor,
                         'nombre':this.nombre,
-                        'email':this.email,
-                        'password':this.password,
+                        'rut':this.rut,
                         }, configuracion)
                     .then(function(response){
                         me.limpiar();
@@ -253,11 +252,10 @@
 
                 } else {
                     //Código para guardar una categoría
-                    axios.post('usuario/add', {
-                        'rol': this.rol,
+                    axios.post('proveedor/add', {
+                        'tipo_proveedor': this.tipo_proveedor,
                         'nombre':this.nombre,
-                        'email':this.email,
-                        'password':this.password,
+                        'rut':this.rut,
                         }, configuracion)
                     .then(function(response){
                         me.limpiar();
@@ -273,10 +271,9 @@
             },
             editItem (item) {
                 this._id = item._id;
-                this.rol = item.rol;
+                this.tipo_proveedor = item.tipo_proveedor;
                 this.nombre = item.nombre;
-                this.email = item.email;
-                this.password = item.password;
+                this.rut = item.rut;
                 this.dialog = true;
                 this.editedIndex = 1;
             },
@@ -302,7 +299,7 @@
                 let me = this;
                 let header = { "token": this.$store.state.token};
                 let configuracion = { headers: header };
-                axios.put('usuario/activate', {'_id':this.adId}, configuracion)
+                axios.put('proveedor/activate', {'_id':this.adId}, configuracion)
                 .then(function(response){
                     me.adModal=0,
                     me.adAccion=0,
@@ -318,7 +315,7 @@
                 let me = this;
                 let header = { "token": this.$store.state.token};
                 let configuracion = { headers: header };
-                axios.put('usuario/desactivate', {'_id':this.adId}, configuracion)
+                axios.put('proveedor/desactivate', {'_id':this.adId}, configuracion)
                 .then(function(response){
                     me.adModal=0,
                     me.adAccion=0,

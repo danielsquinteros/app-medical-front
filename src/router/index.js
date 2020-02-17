@@ -6,6 +6,7 @@ import Login from '../components/Login.vue'
 import Categoria from '../components/Categoria.vue'
 import Usuario from '../components/Usuario.vue'
 import Articulo from '../components/Articulo.vue'
+import Proveedor from '../components/Proveedor.vue'
 
 Vue.use(VueRouter)
 
@@ -50,6 +51,16 @@ const routes = [
     path: '/articulo',
     name: 'articulo',
     component: Articulo,
+    meta: {
+      administrador: true,
+      dentista: true,
+      asistente: true
+    },
+  },
+  {
+    path: '/proveedor',
+    name: 'proveedor',
+    component: Proveedor,
     meta: {
       administrador: true,
       dentista: true,
