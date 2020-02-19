@@ -7,7 +7,8 @@
             :search="search"
             sort-by="calories"
             class="elevation-1"
-            >
+            >      
+      
             <template v-slot:top>
                 <v-toolbar flat color="white">
                 <v-toolbar-title>Artículos</v-toolbar-title>
@@ -223,7 +224,7 @@
                     { text: 'Tipo de Stock', value: 'tipo_stock', sortable: false },
                     { text: 'Marca', value: 'marca', sortable: true },
                     { text: 'Precio', value: 'precio', sortable: false },
-                    { text: 'Fecha de Vencimiento', value: 'fecha_vencimiento', sortable: true, dataType: "Date" },
+                    { text: 'Fecha de Vencimiento', value: 'fecha_vencimiento', sortable: false },
                     { text: 'Estado', value: 'estado', sortable: true },
                 ],
                 editedIndex: -1,
