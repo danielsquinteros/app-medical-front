@@ -10,7 +10,12 @@
             >      
       
             <template v-slot:top>
-                <v-toolbar flat color="white">
+                <v-toolbar text class="elevation-0" color="white">
+                <v-btn class="mr-5 elevation-2" text color="dark" @click="crearPDF()">
+                    <v-icon>
+                    print
+                    </v-icon>
+                </v-btn>
                 <v-toolbar-title>Artículos</v-toolbar-title>
                 <v-divider
                     class="mx-4"
@@ -72,7 +77,7 @@
                             </v-col>
                             <v-col cols="12" sm="12" md="12">
                             <v-text-field
-                                v-model="fecha_vencimiento"
+                                v-model="fechaVencimiento"
                                 label="Fecha Vencimiento"
                                 hint="YYYY-MM-DD (Formato)"
                                 persistent-hint
@@ -132,8 +137,14 @@
                 </v-dialog>
                 </v-toolbar>
             </template>
-            <template v-slot:item.fecha_vencimiento="{ item }">
-                {{ item.fecha_vencimiento }}
+
+            <template v-slot:item.fechaVencimiento="props">
+                <div v-if="props.item.fechaVencimiento==null">
+                    <span class="text--disabled">Nula</span>
+                </div>
+                <div v-else>
+                    {{ props.item.fechaVencimiento.split('T').shift() }}
+                </div>
             </template>
 
             <template v-slot:item.opciones="{ item }" wrap>
@@ -208,6 +219,8 @@
 
 <script>
     import axios from 'axios'
+    import jsPDF from 'jspdf'
+    import autoTable from 'jspdf-autotable'
     export default {
         data (){
             return{
@@ -224,7 +237,7 @@
                     { text: 'Tipo de Stock', value: 'tipo_stock', sortable: false },
                     { text: 'Marca', value: 'marca', sortable: true },
                     { text: 'Precio', value: 'precio', sortable: false },
-                    { text: 'Fecha de Vencimiento', value: 'fecha_vencimiento', sortable: false },
+                    { text: 'Fecha de Vencimiento', value: 'fechaVencimiento', sortable: true },
                     { text: 'Estado', value: 'estado', sortable: true },
                 ],
                 editedIndex: -1,
@@ -240,7 +253,7 @@
                 tipo_stock:'',
                 tipos_de_stocks:['Unidad', 'Cajas', 'Bidon','Kit','Paquete','Frasco','Bolsa'],
                 precio:'',
-                fecha_vencimiento:'',
+                fechaVencimiento:'',
                 valida:0,
                 validaMensaje:[],
                 adModal:0,
@@ -267,6 +280,35 @@
         },
 
         methods: {
+            crearPDF(){
+                    var columns = [
+                        {title: "Categoría", dataKey: "categoria"},
+                        {title: "Nombre", dataKey: "nombre"},
+                        {title: "Código", dataKey: "codigo"},
+                        {title: "Stock", dataKey: "stock"},
+                        {title: "Tipo de Stock", dataKey: "tipo_stock"},
+                    ];
+                    var rows = [];
+                    this.articulos.map(function(x){
+                        rows.push(
+                            {
+                                nombre:x.nombre,
+                                codigo:x.codigo,
+                                categoria:x.categoria.nombre,
+                                stock:x.stock,
+                                tipo_stock:x.tipo_stock                    
+                            }
+                        );
+                    });
+                    var doc = new jsPDF('p','pt');
+                    doc.autoTable(columns,rows,{
+                        margin: {top: 60},
+                        didDrawPage: function(data){
+                            doc.text("Lista de Artículos",40,30);
+                        },
+                    });
+                    doc.save('Artículos.pdf')
+            },
             selectCategorias(){
                 let me = this;
                 let categoriaArray = [];
@@ -328,7 +370,7 @@
                 this.stock = '';
                 this.tipo_stock = '';
                 this.tipo_articulo = '';
-                this.fecha_vencimiento = '';
+                this.fechaVencimiento = '';
                 this.precio = '';
                 this.valida=0;
                 this.validaMensaje=[];
@@ -353,7 +395,7 @@
                         'tipo_stock':this.tipo_stock,
                         'tipo_articulo':this.tipo_articulo,
                         'precio':this.precio,
-                        'fecha_vencimiento':this.fecha_vencimiento,
+                        'fechaVencimiento':this.fechaVencimiento,
                         }, configuracion)
                     .then(function(response){
                         me.limpiar();
@@ -375,7 +417,7 @@
                         'tipo_stock':this.tipo_stock,
                         'tipo_articulo':this.tipo_articulo,
                         'precio':this.precio,
-                        'fecha_vencimiento':this.fecha_vencimiento,
+                        'fechaVencimiento':this.fechaVencimiento,
                         }, configuracion)
                     .then(function(response){
                         me.limpiar();
@@ -383,7 +425,7 @@
                         me.listar();
                         
                     }).catch(function(error){
-                        console.log(error);
+                        console.log('ERROR', error);
                     });
 
                 }
@@ -397,7 +439,7 @@
                 this.stock = item.stock;
                 this.tipo_stock = item.tipo_stock;
                 this.tipo_articulo = item.tipo_articulo;
-                this.fecha_vencimiento = item.fecha_vencimiento;
+                this.fechaVencimiento = item.fechaVencimiento;
                 this.precio = item.precio;
                 this.marca = item.marca;
                 this.dialog = true;

@@ -8,6 +8,7 @@ import Usuario from '../components/Usuario.vue'
 import Articulo from '../components/Articulo.vue'
 import Proveedor from '../components/Proveedor.vue'
 import Ingreso from '../components/Ingreso.vue'
+import Cotiza from '../components/Cotiza.vue'
 
 Vue.use(VueRouter)
 
@@ -78,7 +79,16 @@ const routes = [
       asistente: true
     },
   },
-  
+  {
+    path: '/cotiza',
+    name: 'cotiza',
+    component: Cotiza,
+    meta: {
+      administrador: true,
+      dentista: true,
+      asistente: true
+    }
+  }
 ]
 
 const router = new VueRouter({

@@ -3,7 +3,7 @@
         <v-col>
             <v-data-table
             :headers="headers"
-            :items="ingresos"
+            :items="cotizaciones"
             :search="search"
             sort-by="calories"
             class="elevation-1"
@@ -11,17 +11,17 @@
             v-if="verNuevo==0"
             >
                 <template v-slot:top>
-                    <v-toolbar flat color="white">
-                    <v-toolbar-title>Ingresos de Artículos</v-toolbar-title>
+                    <v-toolbar text class="elevation-0" color="white">
+                    <v-toolbar-title>Crear Cotización</v-toolbar-title>
                     <v-divider
                         class="mx-4"
                         inset
                         vertical
                     ></v-divider>
                     <v-spacer></v-spacer>
-                    <v-text-field  v-if="verNuevo==0"class="text-xs-center" v-model="search" append-icon="search" label="Buscar Ingreso" single-line hide-details ></v-text-field>
+                    <v-text-field  v-if="verNuevo==0"class="text-xs-center" v-model="search" append-icon="search" label="Buscar Cotización" single-line hide-details ></v-text-field>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" dark class="mb-2" v-if="verNuevo ==0" @click="mostrarNuevo()">Nuevo Ingreso</v-btn>
+                    <v-btn color="primary" dark class="mb-2" v-if="verNuevo ==0" @click="mostrarNuevo()">Nueva Cotización</v-btn>
                     <v-dialog v-model="adModal" max-width="290">
                         <v-card>
                             <v-card-title class="headline" v-if="adAccion==1">
@@ -146,23 +146,12 @@
                     class="ml-3 mr-3"
                     >
                         <v-col xs="12" sm="6" md="6" lg="6" xl="6">
-                            <v-select
-                                :items="comprobantes"
-                                v-model="tipo_comprobante"
-                                label="Tipo Comprobante"
-                            ></v-select>
-                        </v-col>
-                        <v-col xs="12" sm="6" md="6" lg="6" xl="6">
-                            <v-text-field v-model="num_comprobante" label="Número Comprobante"
+                            <v-text-field v-model="num_cotizacion" label="Número de Cotización"
                             ></v-text-field>
                         </v-col>
                         <v-col  xs="12" sm="8" md="8" lg="8" xl="8">
                             <v-autocomplete :items="proveedores" v-model="proveedor" label="Proveedor">
                             </v-autocomplete>
-                        </v-col>
-                        <v-col  xs="12" sm="4" md="4" lg="4" xl="4">
-                            <v-text-field type="number" v-model="impuesto" label="Impuesto">
-                            </v-text-field>
                         </v-col>
                         <v-col  xs="12" sm="8" md="8" lg="8" xl="8">
                             <v-text-field  v-model="codigo" label="Código" @keyup.enter="buscarCodigo()"  >
@@ -211,11 +200,7 @@
                                 </v-data-table>
                                 <v-row class="justify-end mt-3 mr-3">
                                     <strong>Total Parcial:</strong> 
-                                    ${{totalParcial=(total-totalImpuesto).toFixed(2)}}
-                                </v-row>
-                                <v-row class="justify-end mr-3">
-                                    <strong>Total Impuesto:</strong> 
-                                    ${{totalImpuesto=((total*impuesto)/(1+impuesto)).toFixed(2)}}
+                                    ${{totalParcial=(total).toFixed(2)}}
                                 </v-row>
                                 <v-row class="justify-end mr-3">
                                     <strong>Total Neto:</strong> ${{total=calcularTotal}}
@@ -241,15 +226,13 @@
             return{
                 dialog: false,
                 search: '',
-                ingresos: [],
+                cotizaciones: [],
                 headers: [
                     { text: 'Opciones', value: 'opciones', sortable: false },
                     { text: 'Usuario', value: 'usuario.nombre', sortable: false },
                     { text: 'Proveedor', value: 'proveedor.nombre', sortable: true },
-                    { text: 'Tipo Comprobante', value: 'tipo_comprobante', sortable: true },
-                    { text: 'Número comprobante', value: 'num_comprobante', sortable: false },
-                    { text: 'Fecha de Ingreso', value: 'createdAt', sortable: true },
-                    { text: 'Impuesto', value: 'impuesto', sortable: false },
+                    { text: 'Número de Cotización', value: 'num_cotizacion', sortable: false },
+                    { text: 'Fecha de Cotización', value: 'createdAt', sortable: true },
                     { text: 'Total', value: 'total', sortable: false },
                     { text: 'Estado', value: 'estado', sortable: false }
                 ],
@@ -257,11 +240,8 @@
                 //CAMBIO
                 proveedor:'',
                 proveedores:[],
-                tipo_comprobante:'',
-                comprobantes:['BOLETA','FACTURA'],
                 // FIN CAMBIO
-                num_comprobante:'',
-                impuesto:0.18,
+                num_cotizacion:'',
                 codigo:'',
                 cabeceraDetalles: [
                     {text: 'Borrar', value: 'borrar', sortable: false},
@@ -276,7 +256,7 @@
                 errorArticulo: null,
                 total:0,
                 totalParcial:0,
-                totalImpuesto:0,
+                //totalImpuesto:0,
                 articulos:[],
                 texto:'',
                 cabeceraArticulos: [
@@ -340,14 +320,8 @@
                 if(!this.proveedor){
                     this.validaMensaje.push('Seleccione un proveedor.');
                 }
-                if(!this.tipo_comprobante){
-                    this.validaMensaje.push('Seleccione un tipo de comprobante.');
-                }
-                if(!this.num_comprobante){
-                    this.validaMensaje.push('Ingrese el número del comprobante.');
-                }
-                if(!this.impuesto || this.impuesto<0 || this.impuesto>1){
-                    this.validaMensaje.push('Ingrese un impuesto válido.');
+                if(!this.num_cotizacion){
+                    this.validaMensaje.push('Ingrese el número de cotizacion.');
                 }
                 if(this.detalles.length<=0){
                     this.validaMensaje.push('Ingrese al menos un artículo al detalle');
@@ -379,7 +353,7 @@
                         _id:data._id,
                         articulo:data.nombre,
                         cantidad:1,
-                        precio:data.precio_venta,
+                        precio:data.precio,
                         tipo_stock:data.tipo_stock
                     }
                 );
@@ -419,7 +393,7 @@
                 let me = this;
                 let header = { "token": this.$store.state.token};
                 let configuracion = { headers: header };
-                axios.get('ingreso/query?_id='+id, configuracion ).then(function(response){
+                axios.get('cotiza/query?_id='+id, configuracion ).then(function(response){
                     me.detalles = response.data.detalles;
                 }).catch(function(error){
                     console.log(error);
@@ -427,10 +401,8 @@
             },
             verIngreso(item){
                 this.limpiar();
-                this.tipo_comprobante=item.tipo_comprobante;
-                this.num_comprobante=item.num_comprobante;
+                this.num_cotizacion=item.num_cotizacion;
                 this.proveedor=item.proveedor._id;
-                this.impuesto=item.impuesto;
                 this.listarDetalles(item._id);
                 this.verNuevo=1;
                 this.verDetalle=1;
@@ -439,8 +411,8 @@
                 let me = this;
                 let header = { "token": this.$store.state.token};
                 let configuracion = { headers: header };
-                axios.get('ingreso/list', configuracion).then(function(response){
-                    me.ingresos = response.data;
+                axios.get('cotiza/list', configuracion).then(function(response){
+                    me.cotizaciones = response.data;
                 }).catch(function(error){
                     console.log(error);
                 })
@@ -448,13 +420,10 @@
             limpiar(){
                 this._id='';
                 this.proveedor='';
-                this.tipo_comprobante='';
-                this.num_comprobante='';
-                this.impuesto=0.18;
+                this.num_cotizacion='';
                 this.codigo='';
                 this.total=0;
                 this.totalParcial=0;
-                this.totalImpuesto=0;
                 this.detalles=[];
                 this.verNuevo=0;
                 this.valida=0;
@@ -477,12 +446,10 @@
                     return;
                 }
                 //Código para guardar un ingreso
-                axios.post('ingreso/add', {
+                axios.post('cotiza/add', {
                     'proveedor':this.proveedor,
                     'usuario':this.$store.state.usuario._id,
-                    'tipo_comprobante': this.tipo_comprobante,
-                    'num_comprobante':this.num_comprobante,
-                    'impuesto': this.impuesto,
+                    'num_cotizacion':this.num_cotizacion,
                     'total':this.total,
                     'detalles':this.detalles
                     }, configuracion)
@@ -515,7 +482,7 @@
                 let me = this;
                 let header = { "token": this.$store.state.token};
                 let configuracion = { headers: header };
-                axios.put('ingreso/activate', {'_id':this.adId}, configuracion)
+                axios.put('cotiza/activate', {'_id':this.adId}, configuracion)
                 .then(function(response){
                     me.adModal=0,
                     me.adAccion=0,
@@ -531,7 +498,7 @@
                 let me = this;
                 let header = { "token": this.$store.state.token};
                 let configuracion = { headers: header };
-                axios.put('ingreso/desactivate', {'_id':this.adId}, configuracion)
+                axios.put('cotiza/desactivate', {'_id':this.adId}, configuracion)
                 .then(function(response){
                     me.adModal=0,
                     me.adAccion=0,
