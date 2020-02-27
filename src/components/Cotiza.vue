@@ -12,44 +12,126 @@
             >
                 <template v-slot:top>
                     <v-toolbar text class="elevation-0" color="white">
-                    <v-toolbar-title>Crear Cotización</v-toolbar-title>
+                    <v-toolbar-title>Crear Pedido</v-toolbar-title>
                     <v-divider
                         class="mx-4"
                         inset
                         vertical
                     ></v-divider>
                     <v-spacer></v-spacer>
-                    <v-text-field  v-if="verNuevo==0"class="text-xs-center" v-model="search" append-icon="search" label="Buscar Cotización" single-line hide-details ></v-text-field>
+                    <v-text-field  v-if="verNuevo==0"class="text-xs-center" v-model="search" append-icon="search" label="Buscar Pedido" single-line hide-details ></v-text-field>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" dark class="mb-2" v-if="verNuevo ==0" @click="mostrarNuevo()">Nueva Cotización</v-btn>
-                    <v-dialog v-model="adModal" max-width="290">
-                        <v-card>
-                            <v-card-title class="headline" v-if="adAccion==1">
-                                Activar Item
-                            </v-card-title>
-                            <v-card-title class="headline" v-if="adAccion==2">
-                                Desactivar Item
-                            </v-card-title>
-                            <v-card-text>
-                                Estás a punto de 
-                                <span v-if="adAccion==1">activar</span>
-                                <span v-if="adAccion==2">desactivar</span> 
-                                el item  {{ adNombre }}               
-                            </v-card-text>
-                            <v-card-actions>  
-                                <v-spacer></v-spacer>
-                                <v-btn @click="activarDesactivarCerrar()" color="green darken-1" text> 
-                                    Cancelar
-                                </v-btn>
-                                <v-btn  v-if="adAccion==1" @click="activar()" color="orange darken-4" text> 
-                                    Aceptar
-                                </v-btn>
-                                <v-btn  v-if="adAccion==2" @click="desactivar()" color="orange darken-4" text> 
-                                    Desactivar
-                                </v-btn>                             
-                            </v-card-actions>                
-                        </v-card>
-                    </v-dialog>
+                    <v-btn color="primary" dark class="mb-2" v-if="verNuevo ==0" @click="mostrarNuevo(), selectNumeroPedido()  ">Nuevo Pedido</v-btn>
+                        <v-dialog v-model="adModal" max-width="290">
+                            <v-card>
+                                <v-card-title class="headline" v-if="adAccion==1">
+                                    Activar Item
+                                </v-card-title>
+                                <v-card-title class="headline" v-if="adAccion==2">
+                                    Desactivar Item
+                                </v-card-title>
+                                <v-card-text>
+                                    Estás a punto de 
+                                    <span v-if="adAccion==1">activar</span>
+                                    <span v-if="adAccion==2">desactivar</span> 
+                                    el item  {{ adNombre }}               
+                                </v-card-text>
+                                <v-card-actions>  
+                                    <v-spacer></v-spacer>
+                                    <v-btn @click="activarDesactivarCerrar()" color="green darken-1" text> 
+                                        Cancelar
+                                    </v-btn>
+                                    <v-btn  v-if="adAccion==1" @click="activar()" color="orange darken-4" text> 
+                                        Aceptar
+                                    </v-btn>
+                                    <v-btn  v-if="adAccion==2" @click="desactivar()" color="orange darken-4" text> 
+                                        Desactivar
+                                    </v-btn>                             
+                                </v-card-actions>                
+                            </v-card>
+                        </v-dialog>
+                        <v-dialog
+                            v-model="comprobanteModal"
+                            max-width="1000px"
+                        >
+                            <v-card>
+                                   <v-card-title class="headline">
+                                        <v-btn class="mr-3" @click="crearPDF()">
+                                        <v-icon >print</v-icon>
+                                        </v-btn>
+                                        Reporte de Pedido
+                                </v-card-title>
+                                <v-card-text>
+                                   <div id="cotizacion">
+                                        <header>
+                                            <div id="logo">
+                                                <img src="data:image/png;base64,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" id="imagen">
+                                            </div>
+                                            <div id="datos">
+                                                <p id="encabezado">
+                                                    <b>Centro Médico - VidaPlus</b>
+                                                    <br>Parcela 154, KM 8, Sector La Vara, Puerto Montt, Chile<br>Telefono: 65 2576195, 65 2576196<br>Email:contacto@ongbilav.cl
+                                                </p>
+                                            </div>
+                                            <div id="fact">
+                                                <p> PEDIDO DE ARTÍCULOS <br>
+                                               <span> Número de Pedido: {{ num_cotizacion }} </span>
+                                                <div v-if="fecha==null">
+                                                    <span class="text--disabled">Nula</span>
+                                                </div>
+                                                <div v-else>
+                                                   <span> Fecha de Pedido: {{ fecha.split('T').shift() }} </span>
+                                                </div>
+                                                </p>
+                                            </div>
+                                        </header>
+                                        <br>
+                                        <section>
+                                            <div>
+                                                <table id="facliente">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td id="cliente">
+                                                                <strong>Para: {{proveedor.nombre}}</strong><br>
+                                                                <strong>Rut:</strong> {{proveedor.rut}}<br>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </section>
+                                        <br>
+                                        <section>
+                                            <div>
+                                                <table id="facarticulo">
+                                                    <thead>
+                                                        <tr id="fa">
+                                                            <th>Nombre</th>
+                                                            <th>Cantidad</th>
+                                                            <th>Tipo de Stock</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="det in detalles" :key="det._id">
+                                                            <td style="text-align:center;">{{det.articulo}}</td>
+                                                            <td style="text-align:center;">{{det.cantidad}}</td>
+                                                            <td style="text-align:center;"> {{det.tipo_stock}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </section>
+                                        <br>
+                                        <br>
+                                    </div>  
+
+                                    
+                                </v-card-text>
+                                <v-card-actions>
+                                    <v-btn @click="ocultarComprobante()"  color="blue darken-1" text>Cancelar</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
                     </v-toolbar>
                 </template>
                 <template v-slot:item.opciones="{ item }">
@@ -59,6 +141,13 @@
                     @click="verIngreso(item)"
                     >
                     tab
+                    </v-icon>
+                    <v-icon
+                    small
+                    class="mr-2"
+                    @click="mostrarComprobante(item)"
+                    >
+                    print
                     </v-icon>
                     <template v-if="item.estado">
                         <v-icon
@@ -144,12 +233,19 @@
                 </v-dialog>
                     <v-row
                     class="ml-3 mr-3"
-                    >
-                        <v-col xs="12" sm="6" md="6" lg="6" xl="6">
-                            <v-text-field v-model="num_cotizacion" label="Número de Cotización"
+                    >      
+                        <v-col  xs="12" sm="2" md="2" lg="2" xl="2">
+                               <v-text-field
+                                v-model="'00'+Math.max.apply(Math, num_pedidos)"
+                                disabled
+                                label="Número de Pedido Anterior"
+                                ></v-text-field>                            
+                        </v-col>
+                        <v-col xs="12" sm="4" md="4" lg="4" xl="4">
+                            <v-text-field v-model="num_cotizacion" label="Número de Pedido"
                             ></v-text-field>
                         </v-col>
-                        <v-col  xs="12" sm="8" md="8" lg="8" xl="8">
+                        <v-col  xs="12" sm="4" md="4" lg="4" xl="4">
                             <v-autocomplete :items="proveedores" v-model="proveedor" label="Proveedor">
                             </v-autocomplete>
                         </v-col>
@@ -221,6 +317,8 @@
 
 <script>
     import axios from 'axios'
+    import jsPDF from 'jspdf';
+    import html2canvas from 'html2canvas';
     export default {
         data (){
             return{
@@ -229,17 +327,18 @@
                 cotizaciones: [],
                 headers: [
                     { text: 'Opciones', value: 'opciones', sortable: false },
-                    { text: 'Usuario', value: 'usuario.nombre', sortable: false },
+                    { text: 'Fecha de Pedido', value: 'createdAt', sortable: true },
+                    { text: 'Número de Pedido', value: 'num_cotizacion', sortable: false },
                     { text: 'Proveedor', value: 'proveedor.nombre', sortable: true },
-                    { text: 'Número de Cotización', value: 'num_cotizacion', sortable: false },
-                    { text: 'Fecha de Cotización', value: 'createdAt', sortable: true },
-                    { text: 'Total', value: 'total', sortable: false },
+                    { text: 'Creador del Pedido', value: 'usuario.nombre', sortable: false },
+                    { text: 'Valor Total del Pedido', value: 'total', sortable: false },
                     { text: 'Estado', value: 'estado', sortable: false }
                 ],
                 _id:'',
                 //CAMBIO
                 proveedor:'',
                 proveedores:[],
+                num_pedidos:[],
                 // FIN CAMBIO
                 num_cotizacion:'',
                 codigo:'',
@@ -276,6 +375,8 @@
                 adAccion:0,
                 adNombre:'',
                 adId:'',
+                comprobanteModal:0,
+                fecha:null,
             }
         },
         computed: {
@@ -297,9 +398,46 @@
         created () {
             this.listar();
             this.selectProveedores();
+            this.selectNumeroPedido();
         },
 
         methods: {
+            crearPDF(){
+                var quotes = document.getElementById('cotizacion');
+                html2canvas(quotes).then(function (canvas) {
+                    var imgData = canvas.toDataURL('image/png');
+                    var imgWidth = 210;
+                    var pageHeight = 295;
+
+                    var imgHeight = canvas.height * imgWidth / canvas.width;
+                    var heightLeft = imgHeight;
+                    
+                    var doc = new jsPDF('p', 'mm', 'a4');
+                    var position = 0;
+
+                    doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+
+                    while (heightLeft >= 0) {
+                        position = heightLeft - imgHeight;
+                        doc.addPage();
+                        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                        heightLeft -= pageHeight;
+                    }
+                    doc.save('ComprobanteCotizacion.pdf');
+                });
+            },
+            mostrarComprobante(item){
+                this.limpiar();
+                this.num_cotizacion=item.num_cotizacion;
+                this.proveedor=item.proveedor;
+                this.fecha=item.createdAt;
+                this.listarDetalles(item._id);
+                this.comprobanteModal=1;
+            },
+            ocultarComprobante(item){
+                this.comprobanteModal=0;
+            },
             selectProveedores(){
                 let me = this;
                 let proveedorArray = [];
@@ -381,7 +519,6 @@
                 let configuracion = { headers: header };
                 axios.get('articulo/list?search='+this.texto, configuracion ).then(function(response){
                     me.articulos = response.data;
-                    console.log(me.articulos);
                 }).catch(function(error){
                     console.log(error);
                 })
@@ -406,6 +543,20 @@
                 this.listarDetalles(item._id);
                 this.verNuevo=1;
                 this.verDetalle=1;
+            },
+            selectNumeroPedido(){
+                let me = this;
+                let numeroCotizacionArray = [];
+                let header = { "token": this.$store.state.token};
+                let configuracion = { headers: header };
+                axios.get('cotiza/list', configuracion ).then(function(response){
+                    numeroCotizacionArray  = response.data;
+                    numeroCotizacionArray.map(function(x){
+                        me.num_pedidos.push(parseInt(x.num_cotizacion))
+                    });
+                }).catch(function(error){
+                    console.log(error);
+                });
             },
             listar(){
                 let me = this;
@@ -516,3 +667,79 @@
         }
     }
 </script>
+<style>
+#cotizacion {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    font-size: 16px ;
+}
+
+#logo {
+   
+    margin-left: 20%;
+    margin-right: 2%;
+}
+#imagen {
+    width: 100px;
+}
+
+#fact {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}   
+
+#datos {
+    float: left;
+    margin-top: 0%;
+    margin-left: 2%;
+    margin-right: 2%;
+    /*text-align: justify;*/
+}
+
+#encabezado {
+    text-align: center;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+section {
+    clear: left;
+}
+
+#cliente {
+    text-align: left;
+}
+
+#facliente {
+    width: 40%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin-bottom: 15px;
+}
+
+#fa {
+    color: #FFFFFF;
+    font-size: 14px;
+}
+
+#facarticulo {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+#facarticulo thead {
+    padding: 20px;
+    background: #2183E3;
+    text-align: center;
+    border-bottom: 1px solid #FFFFFF;
+}
+
+#gracias {
+    text-align: center;
+}
+</style>

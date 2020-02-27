@@ -21,7 +21,7 @@
                     <v-spacer></v-spacer>
                     <v-text-field  v-if="verNuevo==0"class="text-xs-center" v-model="search" append-icon="search" label="Buscar Ingreso" single-line hide-details ></v-text-field>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" dark class="mb-2" v-if="verNuevo ==0" @click="mostrarNuevo()">Nuevo Ingreso</v-btn>
+                    <v-btn color="primary" dark class="mb-2" v-if="verNuevo ==0" @click="mostrarNuevo()">Agregar Artículos</v-btn>
                     <v-dialog v-model="adModal" max-width="290">
                         <v-card>
                             <v-card-title class="headline" v-if="adAccion==1">

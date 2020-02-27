@@ -72,16 +72,6 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{name: 'proveedor'}">
-              <v-list-item-action>
-                <v-icon>table_chart</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  Proveedores
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
           </v-list-group>
         </template>
         <template v-if="esAdministrador || esDentista || esAsistente">
@@ -89,7 +79,7 @@
             <v-list-item slot="activator">
               <v-list-item-content>
                 <v-list-item-title>
-                  Cotización
+                  Pedido
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -99,17 +89,7 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  Crear Cotización
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item :to="{name: 'proveedor'}">
-              <v-list-item-action>
-                <v-icon>table_chart</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  Proveedores
+                  Crear Pedido
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -131,6 +111,27 @@
               <v-list-item-content>
                 <v-list-item-title>
                   Usuarios
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-group>
+        </template>
+        <template v-if="esAdministrador">
+          <v-list-group>
+            <v-list-item slot="activator">
+              <v-list-item-content>
+                <v-list-item-title>
+                  Proveedores
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item :to="{name: 'proveedor'}">
+              <v-list-item-action>
+                <v-icon>table_chart</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Agregar Proveedor
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>

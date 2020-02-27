@@ -223,7 +223,7 @@
                 this.rut='';
                 this.valida=0;
                 this.validaMensaje=[];
-                this.editedIndex=-1;
+                this.editedIndex=1;
             },
             guardar(){
                 let me = this;

@@ -224,7 +224,7 @@
                 this.rol='';
                 this.valida=0;
                 this.validaMensaje=[];
-                this.editedIndex=-1;
+                this.editedIndex=11;
             },
             guardar(){
                 let me = this;
@@ -332,7 +332,15 @@
 
 
             close () {
-                this.dialog = false
+                this.dialog = false;
+                this._id='';
+                this.nombre='';
+                this.email='';
+                this.password='';
+                this.rol='';
+                this.valida=0;
+                this.validaMensaje=[];
+                this.editedIndex=11;
             },
         }
     }

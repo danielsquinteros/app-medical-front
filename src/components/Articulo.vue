@@ -374,7 +374,7 @@
                 this.precio = '';
                 this.valida=0;
                 this.validaMensaje=[];
-                this.editedIndex=-1;
+                this.editedIndex=1;
             },
             guardar(){
                 let me = this;
@@ -514,7 +514,19 @@
 
 
             close () {
-                this.dialog = false
+                this.dialog = false;
+                this._id='';
+                this.categoria = '';
+                this.codigo = '';
+                this.nombre = '';
+                this.stock = '';
+                this.tipo_stock = '';
+                this.tipo_articulo = '';
+                this.fechaVencimiento = '';
+                this.precio = '';
+                this.valida=0;
+                this.validaMensaje=[];
+                this.editedIndex=1;
             },
         }
     }
