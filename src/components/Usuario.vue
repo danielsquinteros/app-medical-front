@@ -59,8 +59,8 @@
         
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
-                        <v-btn color="blue darken-1" text @click="guardar">Guardar</v-btn>
+                        <v-btn color="red" text @click="close">Cancelar</v-btn>
+                        <v-btn color="success" text @click="guardar">Guardar</v-btn>
                     </v-card-actions>
                     </v-card>
                     
@@ -122,7 +122,7 @@
             </template>
             <template v-slot:item.estado="{ item }">
                 <div v-if="item.estado === 1">
-                    <span class="blue--text">Activo</span>
+                    <span class="green--text">Activo</span>
                 </div>
                 <div v-else>
                     <span class="red--text">Inactivo</span>

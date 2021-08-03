@@ -11,12 +11,80 @@
       
             <template v-slot:top>
                 <v-toolbar text class="elevation-0" color="white">
-                <v-btn class="mr-5 elevation-2" text color="dark" @click="crearPDF()">
-                    <v-icon>
-                    print
-                    </v-icon>
-                </v-btn>
-                <v-toolbar-title>Artículos</v-toolbar-title>
+                <template>
+                    <div class="text-center">
+                        <v-menu
+                        :close-on-content-click="false"
+                        :nudge-width="200"
+                        offset-x
+                        >
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                            color="primary"
+                            elevation="0"
+                            v-bind="attrs"
+                            v-on="on"
+                            outlined
+                            >
+                            <v-icon
+                              color="primary">
+                                print
+                            </v-icon>
+                            <v-spacer
+                                class="mx-1"
+                            ></v-spacer>
+                            Imprimir Artículos
+                            </v-btn>
+                        </template>
+
+                        <v-card>
+                            <v-list>
+                                <v-list-item>
+                                    <v-list-item-action>
+                                        <v-btn class="mr-5 elevation-2" text color="green" @click="crearPDF()">
+                                            <v-icon>
+                                            print
+                                            </v-icon>
+                                        </v-btn>
+                                    </v-list-item-action>
+                                    <v-list-item-title> Total Artículos</v-list-item-title>
+                                </v-list-item>
+
+                                <v-list-item>
+                                    <v-list-item-action>
+                                    <v-btn class="mr-5 elevation-2" text color="blue-grey darken-2" @click="crearVencimientoPDF()">
+                                        <v-icon>
+                                        print
+                                        </v-icon>
+                                    </v-btn>
+                                    </v-list-item-action>
+                                    <v-list-item-title> Artículos con Fecha de Vencimiento</v-list-item-title>
+                                </v-list-item>
+                                <v-list-item>
+                                        <v-list-item-action>
+                                            <v-btn class="mr-5 elevation-2" text color="red lighten-1" @click="crearInactivoPDF()">
+                                                <v-icon>
+                                                print
+                                                </v-icon>
+                                            </v-btn>
+                                        </v-list-item-action>
+                                        <v-list-item-title>Artículos Inactivos</v-list-item-title>
+                                </v-list-item>
+                                 <v-list-item>
+                                        <v-list-item-action>
+                                            <v-btn class="mr-5 elevation-2" text color="orange" @click="crearPorCorroborarPDF()">
+                                                <v-icon>
+                                                print
+                                                </v-icon>
+                                            </v-btn>
+                                        </v-list-item-action>
+                                        <v-list-item-title>Artículos Por Corroborar</v-list-item-title>
+                                </v-list-item>
+                            </v-list>
+                        </v-card>
+                        </v-menu>
+                    </div>
+                </template>
                 <v-divider
                     class="mx-4"
                     inset
@@ -94,8 +162,8 @@
         
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
-                        <v-btn color="blue darken-1" text @click="guardar">Guardar</v-btn>
+                        <v-btn color="red" text @click="close">Cancelar</v-btn>
+                        <v-btn color="success" text @click="guardar">Guardar</v-btn>
                     </v-card-actions>
                     </v-card>
                     
@@ -143,9 +211,13 @@
                     <span class="text--disabled">Nula</span>
                 </div>
                 <div v-else>
-                    {{ props.item.fechaVencimiento.split('T').shift() }}
-                </div>
+ 
+                    <span>  {{props.item.fechaVencimiento.split('T').shift()}},  {{ fechaVencimiento1(props.item.fechaVencimiento.split('T').shift()) }}  días </span> 
+            
+                        </div>
             </template>
+
+
 
             <template v-slot:item.opciones="{ item }" wrap>
                 <v-icon
@@ -205,7 +277,7 @@
                     <span class="red--text">Inactivo</span>
                 </div>
                 <div v-else-if="item.estado === 2">
-                    <span class="orange--text">Pendiente</span>
+                    <span class="orange--text">Por corroborar</span>
                 </div>
             </template>
             <template v-slot:no-data>
@@ -221,6 +293,7 @@
     import axios from 'axios'
     import jsPDF from 'jspdf'
     import autoTable from 'jspdf-autotable'
+    import moment from 'moment'
     export default {
         data (){
             return{
@@ -235,9 +308,9 @@
                     { text: 'Nombre', value: 'nombre', sortable: false },
                     { text: 'Stock', value: 'stock', sortable: false },
                     { text: 'Tipo de Stock', value: 'tipo_stock', sortable: false },
-                    { text: 'Marca', value: 'marca', sortable: true },
-                    { text: 'Precio', value: 'precio', sortable: false },
-                    { text: 'Fecha de Vencimiento', value: 'fechaVencimiento', sortable: true },
+                   /* { text: 'Marca', value: 'marca', sortable: true },
+                    { text: 'Precio', value: 'precio', sortable: false }, */
+                    { text: 'Dias de Vencimiento', value: 'fechaVencimiento', sortable: true },
                     { text: 'Estado', value: 'estado', sortable: true },
                 ],
                 editedIndex: -1,
@@ -277,9 +350,16 @@
         created () {
             this.listar();
             this.selectCategorias();
+            this.fechaVencimiento1();
         },
 
         methods: {
+            fechaVencimiento1(fecha_test){
+                const NowMoment = moment().format("YYYY-MM-DD");
+                const DiasRestantes = moment(`'${fecha_test}'`).diff(NowMoment, 'days');
+                return DiasRestantes
+            },
+
             crearPDF(){
                     var columns = [
                         {title: "Categoría", dataKey: "categoria"},
@@ -300,14 +380,145 @@
                             }
                         );
                     });
+                    const NowMomentTitulo = moment().format("YYYY-MM-DD");
                     var doc = new jsPDF('p','pt');
                     doc.autoTable(columns,rows,{
                         margin: {top: 60},
                         didDrawPage: function(data){
-                            doc.text("Lista de Artículos",40,30);
+                            doc.text(`Total de Artículos, al día ${NowMomentTitulo}`,40,30);
                         },
                     });
-                    doc.save('Artículos.pdf')
+                    doc.save(`Total de Artículos, al día ${NowMomentTitulo}.pdf`)
+            },
+            crearVencimientoPDF(){
+                    var columns = [
+                        {title: "Nombre", dataKey: "nombre"},
+                        {title: "Stock", dataKey: "stock"},
+                        {title: "Tipo de Stock", dataKey: "tipo_stock"},
+                        {title: "Fecha de Vencimiento", dataKey: "fecha_vencimiento"},
+                        {title: "Dias restantes", dataKey: "dias_restantes"},
+                    ];
+                    var rows = [];
+                    this.articulos.map(function(x){
+                        if(x.fechaVencimiento !== null){
+                            const fechaVencimientoNormalizada = x.fechaVencimiento.split('T').shift()
+                            const NowMoment = moment().format("YYYY-MM-DD"); 
+                            const DiasRestantes = moment(`'${fechaVencimientoNormalizada}'`).diff(NowMoment, 'days');
+                            rows.push(
+                                {
+                                    nombre:x.nombre,
+                                    stock:x.stock,
+                                    tipo_stock:x.tipo_stock,
+                                    fecha_vencimiento:fechaVencimientoNormalizada,
+                                    dias_restantes:DiasRestantes,
+                                                       
+                                }
+                            );
+                            
+                        }
+                    });
+                    const NowMomentTitulo = moment().format("YYYY-MM-DD");
+                    var doc = new jsPDF('p','pt');
+                    doc.autoTable(columns,rows,{
+                        margin: {top: 60},
+                        didDrawPage: function(data){
+                            doc.text(`Lista de Artículos con fecha de vencimiento, al día ${NowMomentTitulo}`,40,30);
+                        },
+                    });
+                    doc.save(`Artículos, con fecha de vencimiento al día ${NowMomentTitulo}.pdf`)
+            },
+            crearInactivoPDF(){
+                var columns = [
+                    {title: "Nombre", dataKey: "nombre"},
+                    {title: "Stock", dataKey: "stock"},
+                    {title: "Tipo de Stock", dataKey: "tipo_stock"},
+                    {title: "Fecha de Vencimiento", dataKey: "fecha_vencimiento"},
+                /*    {title: "Dias restantes", dataKey: "dias_restantes"}, */
+                    {title: "Estado", dataKey: "estado"},
+                ];
+                var rows = [];
+                this.articulos.map(function(x){
+                    if(x.estado === 0){
+                        let fechaVencimientoNormalizada = ''
+
+                        if(x.fechaVencimiento == null ) {
+                            fechaVencimientoNormalizada = 'Sin fecha de vencimiento'
+
+                        } else {
+                            fechaVencimientoNormalizada = x.fechaVencimiento.split('T').shift()
+                        }
+                        const NowMoment = moment().format("YYYY-MM-DD"); 
+                        const DiasRestantes = moment(`'${fechaVencimientoNormalizada}'`).diff(NowMoment, 'days');
+                        rows.push(
+                            {
+                                nombre:x.nombre,
+                                stock:x.stock,
+                                tipo_stock:x.tipo_stock,
+                                fecha_vencimiento:fechaVencimientoNormalizada,
+                                /*dias_restantes:DiasRestantes,*/
+                                estado:'Inactivo',
+                                                    
+                            }
+                        );
+                        
+                    }
+                });
+                const NowMomentTitulo = moment().format("YYYY-MM-DD");
+                var doc = new jsPDF('p','pt');
+                doc.autoTable(columns,rows,{
+                    margin: {top: 40},
+                    columnWidth: 'wrap',
+                    didDrawPage: function(data){
+                        doc.text(`Lista de Artículos Inactivos, al día ${NowMomentTitulo}`,40,30);
+                    },
+                });
+                doc.save(`Artículos Inactivos al día ${NowMomentTitulo}.pdf`)
+            },
+            crearPorCorroborarPDF(){
+                var columns = [
+                    {title: "Nombre", dataKey: "nombre"},
+                    {title: "Stock", dataKey: "stock"},
+                    {title: "Tipo de Stock", dataKey: "tipo_stock"},
+                    {title: "Fecha de Vencimiento", dataKey: "fecha_vencimiento"},
+                /*    {title: "Dias restantes", dataKey: "dias_restantes"}, */
+                    {title: "Estado", dataKey: "estado"},
+                ];
+                var rows = [];
+                this.articulos.map(function(x){
+                    if(x.estado === 2){
+                        let fechaVencimientoNormalizada = ''
+                        if(x.fechaVencimiento == null ) {
+                            fechaVencimientoNormalizada = 'Sin fecha de vencimiento'
+
+                        } else {
+                            fechaVencimientoNormalizada = x.fechaVencimiento.split('T').shift()
+                        }
+                        const NowMoment = moment().format("YYYY-MM-DD"); 
+                        const DiasRestantes = moment(`'${fechaVencimientoNormalizada}'`).diff(NowMoment, 'days');
+                        rows.push(
+                            {
+                                nombre:x.nombre,
+                                stock:x.stock,
+                                tipo_stock:x.tipo_stock,
+                                fecha_vencimiento:fechaVencimientoNormalizada,
+                                /*dias_restantes:DiasRestantes,*/
+                                estado:'Por Corroborar',
+                                                    
+                            }
+                        );
+                        
+                    }
+                });
+                const NowMomentTitulo = moment().format("YYYY-MM-DD");
+                var doc = new jsPDF('p','pt');
+                doc.autoTable(columns,rows,{
+                    margin: {top: 40},
+                    columnWidth: 'wrap',
+                    didDrawPage: function(data){
+                        doc.text(`Lista de Artículos Por Corroborar, al día ${NowMomentTitulo}`,40,30);
+                    },
+                });
+                doc.save(`Artículos Por Corroborar al día ${NowMomentTitulo}.pdf`)
             },
             selectCategorias(){
                 let me = this;
@@ -526,8 +737,8 @@
                 this.precio = '';
                 this.valida=0;
                 this.validaMensaje=[];
-                this.editedIndex=1;
+                this.editedIndex=-1;
             },
-        }
+        },
     }
 </script>

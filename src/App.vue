@@ -143,7 +143,7 @@
     <v-app-bar
       :clipped-left="$vuetify.breakpoint.lgAndUp"
       app
-      color="blue darken-3"
+      color="#3b5c7a"
       dark
     >
       <v-toolbar-title
@@ -151,7 +151,7 @@
         class="ml-0 pl-3"
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-        <span class="hidden-sm-and-down">VidaPlus</span>
+        <span class="hidden-sm-and-down">BilavPlus</span>
       </v-toolbar-title>      
       <v-spacer></v-spacer>
       <v-btn class="mr-3"  @click="salir()"  icon v-if="logueado">

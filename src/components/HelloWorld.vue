@@ -2,7 +2,8 @@
   <v-container class="text-center">
     <v-row
       text-center
-      wrap
+      flex
+      column
       align-center
       justify-center
     >
@@ -13,7 +14,7 @@
       </v-col>
       <v-col xs="12">
         <v-img
-          :src="require('../assets/logo_vidaplus.png')"
+          :src="require('../assets/logo_bilavplus.png')"
           class="my-3"
           contain
           height="150"

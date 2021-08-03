@@ -138,7 +138,7 @@
                         </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
+                            <v-btn color="red" text @click="close">Cancelar</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
@@ -226,7 +226,7 @@
                         <v-col  xs="12" sm="12" md="12" lg="12" xl="12" >
                             <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
                         </v-col>
-                        <v-btn color="blue darken-1" class="mr-4" text @click.native="ocultarNuevo()">Cancelar</v-btn>
+                        <v-btn color="red" class="mr-4" text @click.native="ocultarNuevo()">Cancelar</v-btn>
                         <v-btn color="success" v-if="verDetalle==0" @click.native="guardar()">Guardar</v-btn>
             </v-row>
         </v-col>
@@ -370,6 +370,7 @@
                 })
             },
             agregarDetalle(data){
+                data.precio=0;
                 this.errorArticulo=null;
                 if (this.encuentra(data._id)==true){
                     this.errorArticulo='El artículo ya ha sido agregado.';

@@ -2,21 +2,21 @@
     <v-row class="justify-center">
         <v-col xs="12" sm="8" md="6" lg="5" xl="4">
             <v-card>
-                <v-toolbar dark color="blue darken-3">
+                <v-toolbar dark color="secondary">
                     <v-toolbar-title>
                         Acceso al Sistema
                     </v-toolbar-title>
                 </v-toolbar>
                 <v-card-text>
-                    <v-text-field v-model="email" autofocus color="accent" label="Email" required></v-text-field>
-                    <v-text-field  v-model="password" type="password" color="accent" label="Password" required></v-text-field>
+                    <v-text-field v-model="email" autofocus color="secondary" label="Email" required></v-text-field>
+                    <v-text-field  v-model="password" type="password" color="secondary" label="Password" required></v-text-field>
                     <v-col class="red--text" v-if="errorMensaje">
                         {{ errorMensaje }}
                     </v-col>
                 </v-card-text>
                 <v-card-actions class="px-3 pb-3">
                     <v-row class=" px-3 pb-3 justify-end">
-                        <v-btn @click="ingresar()" color="primary">Ingresar</v-btn>
+                        <v-btn @click="ingresar()" color="secondary">Ingresar</v-btn>
                     </v-row>
                 </v-card-actions>
             </v-card>
